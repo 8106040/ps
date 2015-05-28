@@ -11,7 +11,7 @@ $azurevm=Get-AzureVM
 Switch($azurevm)
 {
 {$value -eq 1} {  Start-AzureVM -ServiceName $_.ServiceName -Name $_.Name }
-{$value -eq 2} {  Stop-AzureVM -ServiceName $_.ServiceName -Name $_.Name }
+{$value -eq 2} {  Stop-AzureVM -ServiceName $_.ServiceName -Name $_.Name -StayProvisioned }
 Default {"Error input"}
 }
 <#

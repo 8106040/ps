@@ -48,8 +48,8 @@ $vmUserpwd='P2ssw0rd'
 $vmRDP='C:\'+ $vmName + ".rdp"
 $vmSecPassword = ConvertTo-SecureString $vmUserpwd -AsPlainText -Force
 $azureSecPassword = ConvertTo-SecureString $azureUserpwd -AsPlainText -Force
-$vmCred = New-Object System.Management.Automation.PSvmCred($vmUser, $vmSecPassword)
-$azureCred = New-Object System.Management.Automation.PSvmCred($azureUser, $azureSecPassword)
+$vmCred = New-Object System.Management.Automation.PSCredential($vmUser, $vmSecPassword)
+#$azureCred = New-Object System.Management.Automation.PSvmCred($azureUser, $azureSecPassword)
 
 <#
 if (([System.Environment]::OSVersion.Version.Major) -eq 6)
@@ -62,7 +62,7 @@ if (([System.Environment]::OSVersion.Version.Major) -eq 6)
   Write-Host 'IE Enhanced Security Configuration (ESC) has been disabled.' -ForegroundColor Green
 }#>
 
-#init local env
+<#init local env
 Write-Verbose "Starting Chocolatey installation.."
 iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
 
@@ -73,9 +73,9 @@ webpicmd /Install /Products:"Microsoft Azure Powershell" /AcceptEula
 
 write-host "***** Please input your Subscriber ID in another window !!! *****"
 write-host "!!!!! IF Error Occur, Please Reboot and Run This Script Again !!!!!" -BackgroundColor Red
-
+#>
 #login to azure
-Add-AzureAccount -Environment AzureChinaCloud -Credential $azureCred
+Add-AzureAccount -Environment AzureChinaCloud
 
 $azuresubscriptionname = Get-azuresubscription | select SubscriptionName
 
@@ -108,7 +108,7 @@ Get-AzureRemoteDesktopFile -ServiceName $vmService -Name $vmName -LocalPath $vmR
 #Write-Host $vmRDP
 #Write-Verbose 'Please input any key to continue...'
 
-# Install the WinRM Certificate first to access the VM via Remote PS
+<# Install the WinRM Certificate first to access the VM via Remote PS
 # This REQUIRES PowerShell run Elevated
 .\InstallWinRMCertAzureVM.ps1 -SubscriptionName $azuresubscriptionname.SubscriptionName -ServiceName $vmService -Name $vmName 
  
@@ -143,5 +143,5 @@ $tfsuri='http://' + $vmService + ".cloudapp.net:8080/tfs"
 Start-Sleep 60
 
 Start-Process $tfsuri
-
+#>
 break
