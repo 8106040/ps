@@ -1,0 +1,30 @@
+@echo off
+setlocal enabledelayedexpansion
+
+rem  注释包含:"[TFSID]:XXX"
+set GZH="\[TFSID\]:"
+rem  注释包含:"[修改内容]:"
+set XGNR="\[修改内容\]:" 
+
+svnlook log %1 -t %2  | findstr "%GZH%" >nul 2>nul
+if !errorlevel! equ 0 ( goto :xgnr)
+
+echo  "注释必须包含TFS Work Item ID。格式为[TFSID]:XXX" >&2
+goto :fail
+
+:xgnr
+svnlook log %1 -t %2  | findstr "%XGNR%" >nul 2>nul
+if !errorlevel! equ 0 ( goto :success)
+
+echo  "注释必须包含修改内容,格式为[修改内容]:xxx " >&2
+goto :fail
+
+:fail
+exit 1
+goto :end
+ 
+:success
+c:\hook\tfs.exe
+exit 0
+
+:end
